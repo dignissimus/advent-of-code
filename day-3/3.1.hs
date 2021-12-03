@@ -1,0 +1,9 @@
+import Data.Char(digitToInt)
+
+main :: IO ()
+main = show . (\x -> (2**12 - 1 - x) * x)  . sum . map (\x -> (fst x) * (snd x)) . zip powers . map mc . map (map digitToInt) . lines <$> getContents >>= putStrLn
+    where powers = [2^(11-i) | i <- [0..]]
+          mc xs = mc' 0 0 xs
+          mc' x y [] = if x > y then 0 else 1
+          mc' x y (d:ds) = if d == 0 then mc' (x+1) y ds else mc' x (y + 1) ds
+
