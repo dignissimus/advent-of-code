@@ -8,7 +8,7 @@ while True:
     if p < 0:
         p = a
     if a > p:
-        inc+=1
+        inc += 1
     p = a
 
 print(inc)

@@ -14,7 +14,6 @@ while True:
         break
     D[a[0]] += int(b)
     A[a[0]] += int(b)
-    print("d", D['d'] - D['u'])
     if A['f']:
         A['f'] = 0
         D['a'] += int(b) * (A['d'] - A['u'])
