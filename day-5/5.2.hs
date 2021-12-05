@@ -1,9 +1,7 @@
-import Data.List
 import Control.Monad (join)
 import Control.Arrow ((***))
 
 mapTuple = join (***)
-
 
 data LineSegment = LineSegment {
   a :: Rational,
@@ -110,7 +108,7 @@ firstAndLast list = (head list, last list)
  - a * x2 + b * y2 = -1
  - Which is the same as solving
  - [x1 y1; x2 y2] [a; b] = [-1, -1]
- - The solution is [a; b] = [x1 y1 -1; x2 y2 -1]^-1 [-1; -1]
+ - The solution is [a; b] = [x1 y1; x2 y2]^-1 [-1; -1]
  -
  - For the case where one of the points is (0, 0)
  - We solve
@@ -129,7 +127,7 @@ createSegment' (0, 0) (x, y) = LineSegment{a = 1, b = -x/y, c = 0, x1 = 0, x2 = 
 createSegment' point zero@(0, 0) = createSegment' zero point 
 createSegment' (x1, y1) (x2, y2) = LineSegment {
   a = y1 / (x1 * y2 - x2 * y1) - y2 / (x1 * y2 - x2 * y1),
-  b = x2/(x1 * y2 - x2 * y1) - x1 / (x1 * y2 - x2 * y1),
+  b = x2 / (x1 * y2 - x2 * y1) - x1 / (x1 * y2 - x2 * y1),
   c = 1,
   x1 = min x1 x2,
   x2 = max x1 x2,

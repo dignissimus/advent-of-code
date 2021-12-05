@@ -1,7 +1,9 @@
+import Data.List
 import Control.Monad (join)
 import Control.Arrow ((***))
 
 mapTuple = join (***)
+
 
 data LineSegment = LineSegment {
   a :: Rational,
@@ -12,6 +14,13 @@ data LineSegment = LineSegment {
   y1 :: Rational,
   y2 :: Rational
 } -- where ax + by + c == 0
+
+instance Show LineSegment where
+  show LineSegment {
+    a = a,
+    b = b,
+    c = c
+  } = "LineSegment { a = " ++ (show a) ++ ", b = " ++ (show b) ++ ", c = " ++ (show c) ++" }"
 
 data SquareConvexHull = SquareConvexHull {
   sx1 :: Rational,
@@ -25,6 +34,10 @@ main = do
   input <- getContents
   let segments = parse input
   let horizontalAndVerticalSegments = filter isHorizontalOrVertical segments
+  -- putStrLn $ intercalate "\n" $ map show segments
+  -- putStrLn ""
+  -- putStrLn $ intercalate "\n" $ map show horizontalAndVerticalSegments
+  -- putStrLn $ show $ length $ horizontalAndVerticalSegments
   let grid = (convexHullToGrid . calculateConvexHull) horizontalAndVerticalSegments
   let dangerousPoints = filter (dangerous horizontalAndVerticalSegments) grid
   let answer = length dangerousPoints
@@ -47,7 +60,7 @@ dangerous :: [LineSegment] -> (Rational, Rational) -> Bool
 dangerous segments point = ((>=2) . length . filter (contains point)) segments
 
 contains :: (Rational, Rational) -> LineSegment -> Bool
-contains point@(x, y) segment@LineSegment{a = a, b = b, c = c} = inBounds point segment && (a*x + b*y + c == 0) 
+contains point@(x, y) segment@LineSegment{a = a, b = b, c = c} = (a*x + b*y + c == 0)  && inBounds point segment
 
 inBounds :: (Rational, Rational) -> LineSegment -> Bool
 inBounds point@(x, y) segment@LineSegment{x1=x1, x2=x2, y1=y1, y2=y2} = (x1 <= x && x <= x2) && (y1 <= y && y <= y2) 
@@ -109,7 +122,7 @@ firstAndLast list = (head list, last list)
  - a * x2 + b * y2 = -1
  - Which is the same as solving
  - [x1 y1; x2 y2] [a; b] = [-1, -1]
- - The solution is [a; b] = [x1 y1; x2 y2]^-1 [-1; -1]
+ - The solution is [a; b] = [x1 y1 -1; x2 y2 -1]^-1 [-1; -1]
  -
  - For the case where one of the points is (0, 0)
  - We solve
@@ -125,10 +138,10 @@ createSegment (x1, y1) (x2, y2) = createSegment' (fi x1, fi y1) (fi x2, fi y2)
 
 createSegment' :: (Rational, Rational) -> (Rational, Rational) -> LineSegment
 createSegment' (0, 0) (x, y) = LineSegment{a = 1, b = -x/y, c = 0, x1 = 0, x2 = x, y1 = 0, y2 = y}
-createSegment' point zero@(0, 0) = createSegment' zero point 
+createSegment' point@(x, y) zero@(0, 0) = createSegment' zero point -- LineSegment{a = 1, b = -x/y, c = 0, x1 = 0, x2 = x, y1 = 0, y2 = y} 
 createSegment' (x1, y1) (x2, y2) = LineSegment {
   a = y1 / (x1 * y2 - x2 * y1) - y2 / (x1 * y2 - x2 * y1),
-  b = x2 / (x1 * y2 - x2 * y1) - x1 / (x1 * y2 - x2 * y1),
+  b = x2/(x1 * y2 - x2 * y1) - x1 / (x1 * y2 - x2 * y1),
   c = 1,
   x1 = min x1 x2,
   x2 = max x1 x2,
