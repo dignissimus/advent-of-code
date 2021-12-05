@@ -15,3 +15,7 @@ My Advent of Code solutions
 # Day 4
 * Solved part 1 in Python
 * Solved part 2 in Python
+
+# Day 5
+* Solved part 1 in Haskell
+* Solved part 2 in Haskell
